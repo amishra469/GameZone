@@ -1,10 +1,15 @@
 import React from 'react';
-import TicTakToe from './components/TickTakToe';
+// import TicTakToe from './containers/TickTackToe/TickTakToe';
+import Dashboard from './containers/Dashboard/Dashboard';
+import Header from './containers/Header/Header';
 import "./App.css"
 
 const App = () => {
   return (
-    <TicTakToe />
+    <div className="h-screen bg-gray-500 flex flex-col justify-center">
+      <Header />
+      <Dashboard />
+    </div>
   )
 }
 

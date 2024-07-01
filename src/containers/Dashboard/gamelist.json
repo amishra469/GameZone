@@ -1,0 +1,12 @@
+[
+    {
+        "id": 1,
+        "gamename": "Tick Tak Toe",
+        "imzname": "ticktacktoe"
+    },
+    {
+        "id": 2,
+        "gamename": "Rock Paper Scissor",
+        "imzname": "rockpaperscissor"
+    }
+]

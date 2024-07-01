@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import GameBoard from './GameBoard';
 import PreviousMoves from './PreviousMoves';
+import "./TickTakToe.css";
 const TicTakToe = () => {
     const [history, setHistory] = useState([Array(9).fill(null)]);
     const [currentMove, setCurrentMove] = useState(0);
