@@ -29,3 +29,7 @@ module.exports = {
   },
 }
 
+Configure React Router DOM
+npm install react-router-dom
+
+

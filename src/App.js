@@ -1,15 +1,18 @@
 import React from 'react';
-// import TicTakToe from './containers/TickTackToe/TickTakToe';
-import Dashboard from './containers/Dashboard/Dashboard';
+import { RouterProvider } from 'react-router-dom';
+import Routing from './containers/Routing/Routing';
 import Header from './containers/Header/Header';
+import AppLayout from './containers/AppLayout/AppLayout';
 import "./App.css"
 
 const App = () => {
   return (
-    <div className="h-screen bg-gray-500 flex flex-col justify-center">
+    <>
       <Header />
-      <Dashboard />
-    </div>
+      <AppLayout>
+        <RouterProvider router={Routing} />
+      </AppLayout>
+    </>
   )
 }
 
