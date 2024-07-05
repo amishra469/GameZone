@@ -2,11 +2,13 @@
     {
         "id": 1,
         "gamename": "Tick Tak Toe",
-        "imzname": "ticktacktoe"
+        "imzname": "ticktacktoe",
+        "path": "/tiktaktoe"
     },
     {
         "id": 2,
         "gamename": "Rock Paper Scissor",
-        "imzname": "rockpaperscissor"
+        "imzname": "rockpaperscissor",
+        "path": "/rockpaperscissor"
     }
 ]
