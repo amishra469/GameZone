@@ -17,11 +17,12 @@ const TicTakToe = () => {
     useEffect(() => {
         const winner = calculateWinner(history[history.length - 1]);
         if (winner) {
-            let status = winner === "X" ? 'First Player' : 'Second Player';
+            let status = winner === "X" ? firstPlayer : secondPlayer;
+            console.log({ status })
             setWinner(status);
             setIsModalOpen(true);
         }
-    }, [history, isModalOpen])
+    }, [history, isModalOpen, firstPlayer, secondPlayer])
 
     const calculateWinner = (squares) => {
         const lines = [
@@ -55,7 +56,7 @@ const TicTakToe = () => {
 
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
-console.log({isModalOpen})
+
     return (
         <>
             <div className="p-5 flex ">
