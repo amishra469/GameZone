@@ -1,9 +1,10 @@
 import React from "react";
 import Square from "./Square";
 
-const GameBoard = ({ xIsNext, squares, onPlay, setWinner, calculateWinner }) => {
-
+const GameBoard = ({ xIsNext, squares, onPlay, setWinner, calculateWinner, inReviewMode, currentMove, totalMove }) => {
     const handleClick = (i) => {
+        if (inReviewMode) return;
+        if (currentMove < totalMove) return;
         const winner = calculateWinner(squares);
         if (winner || squares[i]) {
             let status;

@@ -11,6 +11,8 @@ const TicTakToe = () => {
     const [currentMove, setCurrentMove] = useState(0);
     const [winner, setWinner] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [inReviewMode, setInReviewMode] = useState(false);
+    const [matchStatus, setMatchStatus] = useState(null);
     const xIsNext = currentMove % 2 === 0;
     const currentSquares = history[currentMove];
 
@@ -18,11 +20,18 @@ const TicTakToe = () => {
         const winner = calculateWinner(history[history.length - 1]);
         if (winner) {
             let status = winner === "X" ? firstPlayer : secondPlayer;
-            console.log({ status })
             setWinner(status);
-            setIsModalOpen(true);
+            setMatchStatus('Win')
+            !inReviewMode && setIsModalOpen(true);
         }
-    }, [history, isModalOpen, firstPlayer, secondPlayer])
+    }, [history, isModalOpen, firstPlayer, secondPlayer, inReviewMode])
+
+    useEffect(() => {
+        if (currentMove === 9) {
+            !inReviewMode && setIsModalOpen(true);
+            setMatchStatus('Draw')
+        }
+    }, [currentMove, inReviewMode])
 
     const calculateWinner = (squares) => {
         const lines = [
@@ -56,6 +65,16 @@ const TicTakToe = () => {
 
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
+    const resetGame = () => {
+        setHistory([Array(9).fill(null)]);
+        setWinner(null);
+        setCurrentMove(0);
+        setMatchStatus(null);
+    }
+    const reviewGame = () => {
+        setInReviewMode(true);
+        closeModal();
+    }
 
     return (
         <>
@@ -67,6 +86,9 @@ const TicTakToe = () => {
                         onPlay={handlePlay}
                         setWinner={setWinner}
                         calculateWinner={calculateWinner}
+                        inReviewMode={inReviewMode}
+                        currentMove={currentMove}
+                        totalMove={history.length - 1}
                     />
                     <div className='m-5 flex justify-between items-center'>
                         <PlayerInput playerType="First Player" player={firstPlayer} setPlayer={setFirstPlayer} currentPlayer={xIsNext ? 'First Player' : 'Second Player'} />
@@ -82,7 +104,15 @@ const TicTakToe = () => {
             </div>
 
             {
-                isModalOpen ? <GameWinModal winner={winner} openModal={openModal} closeModal={closeModal} /> : ""
+                isModalOpen ?
+                    <GameWinModal
+                        winner={winner}
+                        matchStatus={matchStatus}
+                        openModal={openModal}
+                        closeModal={closeModal}
+                        resetGame={resetGame}
+                        reviewGame={reviewGame}
+                    /> : ""
             }
         </>
     )
