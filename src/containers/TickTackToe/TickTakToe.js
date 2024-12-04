@@ -106,6 +106,7 @@ const TicTakToe = () => {
             {
                 isModalOpen ?
                     <GameWinModal
+                        moveCount={currentMove}
                         winner={winner}
                         matchStatus={matchStatus}
                         openModal={openModal}

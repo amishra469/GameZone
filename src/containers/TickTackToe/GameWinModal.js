@@ -1,6 +1,6 @@
 import React from 'react'
 
-const GameWinModal = ({ winner, closeModal, resetGame, reviewGame, matchStatus }) => {
+const GameWinModal = ({ winner, closeModal, resetGame, reviewGame, matchStatus, moveCount }) => {
     const handleReset = () => {
         closeModal();
         resetGame();
@@ -13,9 +13,9 @@ const GameWinModal = ({ winner, closeModal, resetGame, reviewGame, matchStatus }
                         &times;
                     </button>
                 </div>
-                <div>
+                <div className='text-gray-500'>
                     <div className='my-5 text-center text-3xl font-semibold'>{matchStatus === 'Win' ? "Player Won" : 'Match Draw'}</div>
-                    <div className='my-5 text-center text-xl font-semibold'>{matchStatus === 'Win' ? "You Won in 6 moves" : 'Lets Battle Again'}</div>
+                    <div className='my-5 text-center text-xl font-semibold'>{matchStatus === 'Win' ? `You Won in ${moveCount} moves` : 'Lets Battle Again'}</div>
                     <div className='flex justify-evenly'>
                         <button className='bg-green-600 p-2 border-solid border border-green-600 rounded-md text-white' onClick={() => reviewGame()}>Review Game</button>
                         <button className='bg-red-600 p-2 border-solid border border-red-600 rounded-md text-white' onClick={() => handleReset()}>Play Again</button>
