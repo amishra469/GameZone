@@ -19,7 +19,7 @@ const TicTakToe = () => {
     useEffect(() => {
         const winner = calculateWinner(history[history.length - 1]);
         if (winner) {
-            let status = winner === "X" ? firstPlayer : secondPlayer;
+            let status = winner === "X" ? firstPlayer || "X" : secondPlayer || "O";
             setWinner(status);
             setMatchStatus('Win')
             !inReviewMode && setIsModalOpen(true);
