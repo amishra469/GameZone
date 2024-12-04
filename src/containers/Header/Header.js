@@ -1,11 +1,12 @@
-import React from 'react'
-import GameZone from "../../assets/gamezone2.png"
+import React from "react";
+import GameZone from "../../assets/gamezone2.png";
+
 const Header = () => {
     return (
-        <div className="bg-[#111] text-2xl font-bold text-white flex justify-center p-2">
-            <img src={GameZone} alt="Game Zone" className="shadow-lg" />
+        <div className="flex items-center justify-center p-4 shadow-md" style={{background: 'rgb(17,17,17)'}}>
+            <img src={GameZone} alt="Game Zone" className="h-14" />
         </div>
-    )
-}
+    );
+};
 
-export default Header
+export default Header;
