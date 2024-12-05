@@ -1,45 +1,76 @@
-body {
-    font-family: "Arial", sans-serif;
-    text-align: center;
-    margin: 0;
-    background: linear-gradient(to bottom, #1e3c72, #2a5298);
-    color: white;
-    height: 100vh;
-  }
-  
-  .memory-game {
-    max-width: 800px;
+.memory-game {
+    max-width: 900px;
     margin: 20px auto;
-    background: white;
-    border-radius: 10px;
+    background: #ffffffdd;
+    border-radius: 12px;
     padding: 20px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  }
-  
-  .card-grid {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    color: #333;
+}
+
+.mm-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.mm-title {
+    flex: 1;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #6a11cb;
+    text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.mm-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.mm-theme-button {
+    background: linear-gradient(to right, #ff7e5f, #feb47b);
+    color: white;
+    font-weight: bold;
+    text-transform: capitalize;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+}
+
+.mm-theme-button:hover {
+    transform: scale(1.1);
+    background: linear-gradient(to right, #feb47b, #ff7e5f);
+}
+
+.mm-card-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
     gap: 15px;
-    margin: 20px auto;
-  }
-  
-  .card {
-    width: 80px;
-    height: 100px;
+}
+
+.mm-card {
+    position: relative;
+    width: 100px;
+    height: 120px;
     perspective: 1000px;
     cursor: pointer;
-  }
-  
-  .card.flipped .front {
+}
+
+.mm-card.flipped .front {
     transform: rotateY(0);
-  }
-  
-  .card.flipped .back {
+}
+
+.mm-card.flipped .back {
     transform: rotateY(180deg);
-  }
-  
-  .card .front,
-  .card .back {
+}
+
+.mm-card .front,
+.mm-card .back {
     width: 100%;
     height: 100%;
     position: absolute;
@@ -49,34 +80,34 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 28px;
-    border-radius: 10px;
+    font-size: 2rem;
+    border-radius: 8px;
     transition: transform 0.5s;
-  }
-  
-  .card .front {
+}
+
+.mm-card .front {
     background: white;
+    color: #6a11cb;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     transform: rotateY(180deg);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  .card .back {
-    background: #007bff;
+}
+
+.mm-card .back {
+    background: #6a11cb;
     color: white;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  button {
-    padding: 10px 15px;
-    border: none;
-    background: #007bff;
+    transform: rotateY(0);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.mm-game-over {
+    text-align: center;
+    padding: 20px;
+}
+
+.mm-restart-button {
+    background: linear-gradient(to right, #43cea2, #185a9d);
     color: white;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-  }
-  
-  button:hover {
-    background: #0056b3;
-  }
-  
+    border-radius: 10px;
+    padding: 10px 20px;
+    margin-top: 20px;
+}
