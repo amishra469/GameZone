@@ -10,5 +10,11 @@
         "gamename": "Rock Paper Scissor",
         "imzname": "rockpaperscissor",
         "path": "/rockpaperscissor"
+    },
+    {
+        "id": 3,
+        "gamename": "Memory Matching",
+        "imzname": "rockpaperscissor",
+        "path": "/memorymatching"
     }
 ]
