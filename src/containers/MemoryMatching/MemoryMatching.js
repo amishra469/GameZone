@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Button, Typography, Box, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
+import { Button, Typography, Box, Dialog, DialogActions, DialogContent, DialogTitle, Radio, RadioGroup, FormControlLabel, FormLabel } from "@mui/material";
 import "./MemoryMatching.css";
 
 const themes = {
@@ -17,14 +17,18 @@ const MemoryMatching = () => {
     const [isDialogOpen, setIsDialogOpen] = useState(true);
     const [isInitialFlip, setIsInitialFlip] = useState(false);
     const [timerStarted, setTimerStarted] = useState(false);
+    const [selectedLevel, setSelectedLevel] = useState("4"); // default level
 
     const shuffle = (array) => {
         return array.sort(() => Math.random() - 0.5);
     };
 
     const initializeGame = () => {
-        const themeCards = themes.space;
-        const shuffledCards = shuffle([...themeCards]);
+        // Adjust the number of cards based on the selected level
+        const levelCardCount = parseInt(selectedLevel);
+        const themeCards = themes.space.slice(0, levelCardCount / 2); // Each card will be duplicated for matching
+        const shuffledCards = shuffle([...themeCards, ...themeCards]);
+
         setCards(shuffledCards);
         setFlippedCards([]);
         setMatchedCards([]);
@@ -105,6 +109,17 @@ const MemoryMatching = () => {
                 <DialogTitle>Memory Matching Game</DialogTitle>
                 <DialogContent>
                     <Typography>Are you ready to start the game?</Typography>
+                    <FormLabel component="legend">Choose Difficulty</FormLabel>
+                    <RadioGroup
+                        value={selectedLevel}
+                        onChange={(e) => setSelectedLevel(e.target.value)}
+                        row
+                    >
+                        <FormControlLabel value="4" control={<Radio />} label="4 Cards" />
+                        <FormControlLabel value="8" control={<Radio />} label="8 Cards" />
+                        <FormControlLabel value="12" control={<Radio />} label="12 Cards" />
+                        <FormControlLabel value="16" control={<Radio />} label="16 Cards" />
+                    </RadioGroup>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={initializeGame} variant="contained">
