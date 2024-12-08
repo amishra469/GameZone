@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Button, Typography, Box } from "@mui/material";
+import { Button, Typography, Box, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import "./MemoryMatching.css";
 
 const themes = {
@@ -16,30 +16,12 @@ const MemoryMatching = () => {
     const [timer, setTimer] = useState(120);
     const [theme, setTheme] = useState("nature");
     const [gameOver, setGameOver] = useState(false);
-    const [isInitialReveal, setIsInitialReveal] = useState(true);
+    const [isDialogOpen, setIsDialogOpen] = useState(true);
+    const [isInitialFlip, setIsInitialFlip] = useState(true);
 
-    useEffect(() => {
-        initializeGame();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [theme]);
-
-    useEffect(() => {
-        if (isInitialReveal) {
-            const revealTimer = setTimeout(() => {
-                setIsInitialReveal(false);
-            }, 5000); // Show cards for 5 seconds
-            return () => clearTimeout(revealTimer);
-        }
-    }, [isInitialReveal]);
-
-    useEffect(() => {
-        if (timer > 0 && !gameOver) {
-            const interval = setInterval(() => setTimer((prev) => prev - 1), 1000);
-            return () => clearInterval(interval);
-        } else if (timer === 0) {
-            setGameOver(true);
-        }
-    }, [timer, gameOver]);
+    const shuffle = (array) => {
+        return array.sort(() => Math.random() - 0.5);
+    };
 
     const initializeGame = () => {
         const themeCards = themes[theme];
@@ -50,16 +32,29 @@ const MemoryMatching = () => {
         setMoves(0);
         setTimer(120);
         setGameOver(false);
-        setIsInitialReveal(true);
+        setIsDialogOpen(false);
+
+        // Initial flip logic
+        setIsInitialFlip(true);
+        setFlippedCards(cards.map((_, index) => index)); // Flip all cards
+        setTimeout(() => {
+            setIsInitialFlip(false); // Unflip cards after 2 seconds
+            setFlippedCards([]);
+        }, 2000);
     };
 
-    const shuffle = (array) => {
-        return array.sort(() => Math.random() - 0.5);
-    };
+    useEffect(() => {
+        if (timer > 0 && !gameOver) {
+            const interval = setInterval(() => setTimer((prev) => prev - 1), 1000);
+            return () => clearInterval(interval);
+        } else if (timer === 0) {
+            setGameOver(true);
+        }
+    }, [timer, gameOver]);
 
     const handleCardClick = (index) => {
         if (
-            isInitialReveal || // Prevent clicks during initial reveal
+            isInitialFlip || // Prevent clicks during the initial flip
             flippedCards.length === 2 ||
             flippedCards.includes(index) ||
             matchedCards.includes(index)
@@ -84,7 +79,7 @@ const MemoryMatching = () => {
 
     const renderCard = (card, index) => {
         const isFlipped =
-            isInitialReveal ||
+            isInitialFlip || // Flip all cards during the initial flip
             flippedCards.includes(index) ||
             matchedCards.includes(index);
         return (
@@ -104,23 +99,37 @@ const MemoryMatching = () => {
 
     return (
         <Box className="memory-game">
+            {/* Start Dialog */}
+            <Dialog open={isDialogOpen}>
+                <DialogTitle>Memory Matching Game</DialogTitle>
+                <DialogContent>
+                    <Typography>Are you ready to start the game?</Typography>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={initializeGame} variant="contained">
+                        Let's Start!
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* Header */}
             <Box className="mm-header">
-                <Box sx={{ display: 'flex', width: '100%', justifyContent: 'center' }}>
+                <Box sx={{ display: "flex", width: "100%", justifyContent: "center" }}>
                     <Typography variant="h4" className="title">
                         🌟 Memory Matching Game 🌟
                     </Typography>
                 </Box>
-                <Box className="mm-controls" sx={{ display: 'flex', width: '100%', justifyContent: 'space-between' }}>
-                    <Box sx={{ display: 'flex', gap: '20px' }}>
+                <Box className="mm-controls" sx={{ display: "flex", width: "100%", justifyContent: "space-between" }}>
+                    <Box sx={{ display: "flex", gap: "20px" }}>
                         <Button
-                            variant="mm-outlined"
+                            variant="outlined"
                             className="mm-theme-button"
                             onClick={() => setTheme("nature")}
                         >
                             Nature
                         </Button>
                         <Button
-                            variant="mm-outlined"
+                            variant="outlined"
                             className="mm-theme-button"
                             onClick={() => setTheme("space")}
                         >
@@ -137,6 +146,8 @@ const MemoryMatching = () => {
                     </Box>
                 </Box>
             </Box>
+
+            {/* Game Over Screen */}
             {gameOver ? (
                 <Box className="mm-game-over">
                     <Typography variant="h5">
