@@ -4,8 +4,7 @@ import { Button, Typography, Box, Dialog, DialogActions, DialogContent, DialogTi
 import "./MemoryMatching.css";
 
 const themes = {
-    nature: ["🌳", "🌸", "🌊", "🌞", "🌈", "🍂", "🍁", "🌻"],
-    space: ["🌕", "🌌", "⭐", "🚀", "🪐", "🌠", "👽", "🌍"],
+    space: ["🌕", "🌌", "⭐", "🚀", "🪐", "🌠", "👽", "🌍", "🌳", "🌸", "🌊", "🌞", "🌈", "🍂", "🍁", "🌻"],
 };
 
 const MemoryMatching = () => {
@@ -14,7 +13,6 @@ const MemoryMatching = () => {
     const [matchedCards, setMatchedCards] = useState([]);
     const [moves, setMoves] = useState(0);
     const [timer, setTimer] = useState(120);
-    const [theme, setTheme] = useState("nature");
     const [gameOver, setGameOver] = useState(false);
     const [isDialogOpen, setIsDialogOpen] = useState(true);
     const [isInitialFlip, setIsInitialFlip] = useState(false);
@@ -25,16 +23,16 @@ const MemoryMatching = () => {
     };
 
     const initializeGame = () => {
-        const themeCards = themes[theme];
-        const shuffledCards = shuffle([...themeCards, ...themeCards]); // Duplicate and shuffle cards
+        const themeCards = themes.space;
+        const shuffledCards = shuffle([...themeCards]);
         setCards(shuffledCards);
-        setFlippedCards([]); // Start with all cards hidden
+        setFlippedCards([]);
         setMatchedCards([]);
         setMoves(0);
         setTimer(120);
         setGameOver(false);
         setIsDialogOpen(false);
-        setTimerStarted(false); // Reset timer state
+        setTimerStarted(false);
         setIsInitialFlip(true);
 
         // Reveal all cards for 2 seconds, then hide them
@@ -45,7 +43,7 @@ const MemoryMatching = () => {
                 setIsInitialFlip(false);
                 setTimerStarted(true); // Start the timer after flipping back
             }, 2000);
-        }, 500); // Start flipping with a slight delay
+        }, 500);
     };
 
     useEffect(() => {
@@ -117,37 +115,19 @@ const MemoryMatching = () => {
 
             {/* Header */}
             <Box className="mm-header">
-                <Box sx={{ display: "flex", width: "100%", justifyContent: "center" }}>
-                    <Typography variant="h4" className="title">
-                        🌟 Memory Matching Game 🌟
-                    </Typography>
-                </Box>
-                <Box className="mm-controls" sx={{ display: "flex", width: "100%", justifyContent: "space-between" }}>
-                    <Box sx={{ display: "flex", gap: "20px" }}>
-                        <Button
-                            variant="outlined"
-                            className="mm-theme-button"
-                            onClick={() => setTheme("nature")}
-                        >
-                            Nature
-                        </Button>
-                        <Button
-                            variant="outlined"
-                            className="mm-theme-button"
-                            onClick={() => setTheme("space")}
-                        >
-                            Space
-                        </Button>
-                    </Box>
-                    <Box>
-                        <Typography variant="h6" className="info">
-                            Moves: {moves}
-                        </Typography>
-                        <Typography variant="h6" className="info">
-                            Timer: {timer}s
-                        </Typography>
-                    </Box>
-                </Box>
+                <Typography variant="h4" className="title">
+                    🌟 Memory Matching Game 🌟
+                </Typography>
+            </Box>
+
+            {/* Scoreboard */}
+            <Box className="mm-scoreboard">
+                <Typography variant="h6">Moves: {moves}</Typography>
+                <Typography variant="h6">
+                    Cards Left: {cards.length - matchedCards.length}
+                </Typography>
+                <Typography variant="h6">Matched: {matchedCards.length / 2}</Typography>
+                <Typography variant="h6">Timer: {timer}s</Typography>
             </Box>
 
             {/* Game Over Screen */}
