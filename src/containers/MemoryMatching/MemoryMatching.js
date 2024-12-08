@@ -18,6 +18,7 @@ const MemoryMatching = () => {
     const [gameOver, setGameOver] = useState(false);
     const [isDialogOpen, setIsDialogOpen] = useState(true);
     const [isInitialFlip, setIsInitialFlip] = useState(false);
+    const [timerStarted, setTimerStarted] = useState(false);
 
     const shuffle = (array) => {
         return array.sort(() => Math.random() - 0.5);
@@ -33,25 +34,28 @@ const MemoryMatching = () => {
         setTimer(120);
         setGameOver(false);
         setIsDialogOpen(false);
+        setTimerStarted(false); // Reset timer state
+        setIsInitialFlip(true);
 
         // Reveal all cards for 2 seconds, then hide them
         setTimeout(() => {
-            setFlippedCards(cards.map((_, index) => index)); // Flip all cards
+            setFlippedCards(shuffledCards.map((_, index) => index)); // Flip all cards
             setTimeout(() => {
                 setFlippedCards([]); // Hide all cards after 2 seconds
                 setIsInitialFlip(false);
+                setTimerStarted(true); // Start the timer after flipping back
             }, 2000);
         }, 500); // Start flipping with a slight delay
     };
 
     useEffect(() => {
-        if (timer > 0 && !gameOver) {
+        if (timer > 0 && !gameOver && timerStarted) {
             const interval = setInterval(() => setTimer((prev) => prev - 1), 1000);
             return () => clearInterval(interval);
         } else if (timer === 0) {
             setGameOver(true);
         }
-    }, [timer, gameOver]);
+    }, [timer, gameOver, timerStarted]);
 
     const handleCardClick = (index) => {
         if (
