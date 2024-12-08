@@ -16,11 +16,21 @@ const MemoryMatching = () => {
     const [timer, setTimer] = useState(120);
     const [theme, setTheme] = useState("nature");
     const [gameOver, setGameOver] = useState(false);
+    const [isInitialReveal, setIsInitialReveal] = useState(true);
 
     useEffect(() => {
         initializeGame();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [theme]);
+
+    useEffect(() => {
+        if (isInitialReveal) {
+            const revealTimer = setTimeout(() => {
+                setIsInitialReveal(false);
+            }, 5000); // Show cards for 5 seconds
+            return () => clearTimeout(revealTimer);
+        }
+    }, [isInitialReveal]);
 
     useEffect(() => {
         if (timer > 0 && !gameOver) {
@@ -40,6 +50,7 @@ const MemoryMatching = () => {
         setMoves(0);
         setTimer(120);
         setGameOver(false);
+        setIsInitialReveal(true);
     };
 
     const shuffle = (array) => {
@@ -47,7 +58,12 @@ const MemoryMatching = () => {
     };
 
     const handleCardClick = (index) => {
-        if (flippedCards.length === 2 || flippedCards.includes(index) || matchedCards.includes(index)) {
+        if (
+            isInitialReveal || // Prevent clicks during initial reveal
+            flippedCards.length === 2 ||
+            flippedCards.includes(index) ||
+            matchedCards.includes(index)
+        ) {
             return;
         }
 
@@ -67,7 +83,10 @@ const MemoryMatching = () => {
     };
 
     const renderCard = (card, index) => {
-        const isFlipped = flippedCards.includes(index) || matchedCards.includes(index);
+        const isFlipped =
+            isInitialReveal ||
+            flippedCards.includes(index) ||
+            matchedCards.includes(index);
         return (
             <motion.div
                 key={index}
