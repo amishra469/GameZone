@@ -17,7 +17,7 @@ const MemoryMatching = () => {
     const [theme, setTheme] = useState("nature");
     const [gameOver, setGameOver] = useState(false);
     const [isDialogOpen, setIsDialogOpen] = useState(true);
-    const [isInitialFlip, setIsInitialFlip] = useState(true);
+    const [isInitialFlip, setIsInitialFlip] = useState(false);
 
     const shuffle = (array) => {
         return array.sort(() => Math.random() - 0.5);
@@ -27,20 +27,21 @@ const MemoryMatching = () => {
         const themeCards = themes[theme];
         const shuffledCards = shuffle([...themeCards, ...themeCards]); // Duplicate and shuffle cards
         setCards(shuffledCards);
-        setFlippedCards([]);
+        setFlippedCards([]); // Start with all cards hidden
         setMatchedCards([]);
         setMoves(0);
         setTimer(120);
         setGameOver(false);
         setIsDialogOpen(false);
 
-        // Initial flip logic
-        setIsInitialFlip(true);
-        setFlippedCards(cards.map((_, index) => index)); // Flip all cards
+        // Reveal all cards for 2 seconds, then hide them
         setTimeout(() => {
-            setIsInitialFlip(false); // Unflip cards after 2 seconds
-            setFlippedCards([]);
-        }, 2000);
+            setFlippedCards(cards.map((_, index) => index)); // Flip all cards
+            setTimeout(() => {
+                setFlippedCards([]); // Hide all cards after 2 seconds
+                setIsInitialFlip(false);
+            }, 2000);
+        }, 500); // Start flipping with a slight delay
     };
 
     useEffect(() => {
@@ -54,7 +55,7 @@ const MemoryMatching = () => {
 
     const handleCardClick = (index) => {
         if (
-            isInitialFlip || // Prevent clicks during the initial flip
+            isInitialFlip || // Prevent clicks during the initial reveal
             flippedCards.length === 2 ||
             flippedCards.includes(index) ||
             matchedCards.includes(index)
@@ -79,9 +80,7 @@ const MemoryMatching = () => {
 
     const renderCard = (card, index) => {
         const isFlipped =
-            isInitialFlip || // Flip all cards during the initial flip
-            flippedCards.includes(index) ||
-            matchedCards.includes(index);
+            flippedCards.includes(index) || matchedCards.includes(index);
         return (
             <motion.div
                 key={index}
