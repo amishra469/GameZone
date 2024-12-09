@@ -58,11 +58,11 @@ const MemoryMatching = () => {
         setIsPaused(false);
         setIsGameStarted(true);
         setTimeout(() => {
-            setFlippedCards(shuffledCards.map((_, index) => index)); // Flip all cards
+            setFlippedCards(shuffledCards.map((_, index) => index));
             setTimeout(() => {
-                setFlippedCards([]); // Hide all cards after 2 seconds
+                setFlippedCards([]);
                 setIsInitialFlip(false);
-                setTimerStarted(true); // Start the timer after flipping back
+                setTimerStarted(true);
             }, 2000);
         }, 500);
     };
