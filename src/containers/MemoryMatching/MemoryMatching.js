@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Button, Typography, Box, Dialog, DialogActions, DialogContent, DialogTitle, Radio, RadioGroup, FormControlLabel, FormLabel } from "@mui/material";
+import { Button, Typography, Box, Dialog, DialogActions, DialogContent, DialogTitle, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 import "./MemoryMatching.css";
 
 const themes = {
@@ -14,32 +14,49 @@ const MemoryMatching = () => {
     const [moves, setMoves] = useState(0);
     const [timer, setTimer] = useState(120);
     const [gameOver, setGameOver] = useState(false);
+    const [gameLevel, setGameLevel] = useState('easy');
     const [isDialogOpen, setIsDialogOpen] = useState(true);
     const [isInitialFlip, setIsInitialFlip] = useState(false);
     const [timerStarted, setTimerStarted] = useState(false);
-    const [selectedLevel, setSelectedLevel] = useState("4"); // default level
+    const [winDialogOpen, setWinDialogOpen] = useState(false);
+    const [stopGame, setStopGame] = useState(false);
+    const [isPaused, setIsPaused] = useState(false); // Track pause state
+    const [isGameStarted, setIsGameStarted] = useState(false); // Track if game is started
 
+    // Function to shuffle the cards
     const shuffle = (array) => {
         return array.sort(() => Math.random() - 0.5);
     };
 
-    const initializeGame = () => {
-        // Adjust the number of cards based on the selected level
-        const levelCardCount = parseInt(selectedLevel);
-        const themeCards = themes.space.slice(0, levelCardCount / 2); // Each card will be duplicated for matching
-        const shuffledCards = shuffle([...themeCards, ...themeCards]);
+    // Function to set game cards based on level
+    const generateCardsForLevel = (level) => {
+        let themeCards;
+        if (level === 'easy') {
+            themeCards = themes.space.slice(0, 8); // 8 pairs for easy
+        } else if (level === 'medium') {
+            themeCards = themes.space.slice(0, 12); // 12 pairs for medium
+        } else {
+            themeCards = themes.space.slice(0, 16); // 16 pairs for hard
+        }
+        return shuffle([...themeCards, ...themeCards]);
+    };
 
+    // Initialize game based on level
+    const initializeGame = () => {
+        const shuffledCards = generateCardsForLevel(gameLevel);
         setCards(shuffledCards);
         setFlippedCards([]);
         setMatchedCards([]);
         setMoves(0);
         setTimer(120);
         setGameOver(false);
+        setStopGame(false);
         setIsDialogOpen(false);
         setTimerStarted(false);
         setIsInitialFlip(true);
-
-        // Reveal all cards for 2 seconds, then hide them
+        setWinDialogOpen(false);
+        setIsPaused(false);
+        setIsGameStarted(true);
         setTimeout(() => {
             setFlippedCards(shuffledCards.map((_, index) => index)); // Flip all cards
             setTimeout(() => {
@@ -50,22 +67,27 @@ const MemoryMatching = () => {
         }, 500);
     };
 
+    // Timer logic
     useEffect(() => {
-        if (timer > 0 && !gameOver && timerStarted) {
+        if (timer > 0 && !gameOver && timerStarted && !stopGame && !isPaused) {
             const interval = setInterval(() => setTimer((prev) => prev - 1), 1000);
             return () => clearInterval(interval);
         } else if (timer === 0) {
             setGameOver(true);
         }
-    }, [timer, gameOver, timerStarted]);
+    }, [timer, gameOver, timerStarted, stopGame, isPaused]);
 
+    // Check for game win
+    useEffect(() => {
+        if (matchedCards.length === cards.length) {
+            setGameOver(true);
+            setWinDialogOpen(true);
+        }
+    }, [matchedCards, cards.length]);
+
+    // Handle card flip
     const handleCardClick = (index) => {
-        if (
-            isInitialFlip || // Prevent clicks during the initial reveal
-            flippedCards.length === 2 ||
-            flippedCards.includes(index) ||
-            matchedCards.includes(index)
-        ) {
+        if (isInitialFlip || flippedCards.length === 2 || flippedCards.includes(index) || matchedCards.includes(index)) {
             return;
         }
 
@@ -84,9 +106,9 @@ const MemoryMatching = () => {
         }
     };
 
+    // Render individual cards
     const renderCard = (card, index) => {
-        const isFlipped =
-            flippedCards.includes(index) || matchedCards.includes(index);
+        const isFlipped = flippedCards.includes(index) || matchedCards.includes(index);
         return (
             <motion.div
                 key={index}
@@ -102,6 +124,23 @@ const MemoryMatching = () => {
         );
     };
 
+    // Handle level change
+    const handleLevelChange = (event) => {
+        setGameLevel(event.target.value);
+        initializeGame(); // Restart game with new level
+    };
+
+    // Stop the game
+    const stopTheGame = () => {
+        setStopGame(true);
+        setGameOver(true);
+    };
+
+    // Pause and resume game
+    const handlePauseResume = () => {
+        setIsPaused((prev) => !prev);
+    };
+
     return (
         <Box className="memory-game">
             {/* Start Dialog */}
@@ -109,21 +148,36 @@ const MemoryMatching = () => {
                 <DialogTitle>Memory Matching Game</DialogTitle>
                 <DialogContent>
                     <Typography>Are you ready to start the game?</Typography>
-                    <FormLabel component="legend">Choose Difficulty</FormLabel>
-                    <RadioGroup
-                        value={selectedLevel}
-                        onChange={(e) => setSelectedLevel(e.target.value)}
-                        row
-                    >
-                        <FormControlLabel value="4" control={<Radio />} label="4 Cards" />
-                        <FormControlLabel value="8" control={<Radio />} label="8 Cards" />
-                        <FormControlLabel value="12" control={<Radio />} label="12 Cards" />
-                        <FormControlLabel value="16" control={<Radio />} label="16 Cards" />
-                    </RadioGroup>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={initializeGame} variant="contained">
                         Let's Start!
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* Win Dialog */}
+            <Dialog open={winDialogOpen}>
+                <DialogTitle>Congratulations!</DialogTitle>
+                <DialogContent>
+                    <Typography>You won the game in {moves} moves!</Typography>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={initializeGame} variant="contained">
+                        Restart
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* Game Paused Dialog */}
+            <Dialog open={isPaused}>
+                <DialogTitle>Game Paused</DialogTitle>
+                <DialogContent>
+                    <Typography>Click to continue the game.</Typography>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handlePauseResume} variant="contained">
+                        Continue
                     </Button>
                 </DialogActions>
             </Dialog>
@@ -133,6 +187,27 @@ const MemoryMatching = () => {
                 <Typography variant="h4" className="title">
                     🌟 Memory Matching Game 🌟
                 </Typography>
+            </Box>
+
+            {/* Controls */}
+            <Box className="mm-controls">
+                <FormControl>
+                    <InputLabel>Level</InputLabel>
+                    <Select value={gameLevel} onChange={handleLevelChange}>
+                        <MenuItem value="easy">Easy</MenuItem>
+                        <MenuItem value="medium">Medium</MenuItem>
+                        <MenuItem value="hard">Hard</MenuItem>
+                    </Select>
+                </FormControl>
+                <Button onClick={stopTheGame} variant="contained" color="error" style={{ marginLeft: "10px" }}>
+                    Stop
+                </Button>
+                <Button onClick={initializeGame} variant="contained" color="primary" style={{ marginLeft: "10px" }}>
+                    Restart
+                </Button>
+                <Button onClick={handlePauseResume} variant="contained" color={isPaused ? "success" : "warning"} style={{ marginLeft: "10px" }}>
+                    {isPaused ? "Resume" : "Pause"}
+                </Button>
             </Box>
 
             {/* Scoreboard */}
@@ -146,7 +221,7 @@ const MemoryMatching = () => {
             </Box>
 
             {/* Game Over Screen */}
-            {gameOver ? (
+            {gameOver && !winDialogOpen ? (
                 <Box className="mm-game-over">
                     <Typography variant="h5">
                         {matchedCards.length === cards.length ? "🎉 You Win!" : "⏳ Time's Up!"}
